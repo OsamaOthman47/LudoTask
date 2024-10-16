@@ -9,6 +9,7 @@ namespace Ludo
         [SerializeField] PlayerColor playerColor;
         Button _button;
         Transform[] path;
+        int currentPlace;
 
         private void Awake()
         {
@@ -46,6 +47,7 @@ namespace Ludo
         {
             if (GameController.Instance.CurrentDiceValue.Equals(0)) return;
             if (GameController.Instance.IsPlayerMoving) return;
+            if (GameController.Instance.IsDiceRolling) return;
 
             StartCoroutine(MovePlayer());
         }
@@ -57,10 +59,18 @@ namespace Ludo
             Vector3 initialScale = transform.localScale;   // Store the original scale
             Vector3 scaledUp = initialScale * 1.5f;        // Slightly larger scale
 
-            for (int i = 1; i <= GameController.Instance.CurrentDiceValue; i++)
+            GameController.Instance.CurrentDiceValue += currentPlace;
+            Debug.Log("CurrentDiceValue: " + GameController.Instance.CurrentDiceValue);
+
+            int counter = 0;
+
+            for (int i = currentPlace; i < GameController.Instance.CurrentDiceValue; i++)
             {
                 Vector3 startPosition = transform.position;
-                Vector3 targetPosition = path[i - 1].position;
+                //currentPlace = i - 1;
+                //currentPlace = i;
+                counter++;
+                Vector3 targetPosition = path[/*currentPlace*/ i].position;
                 float duration = 0.3f; // Time to move between positions
                 float elapsedTime = 0f;
 
@@ -92,6 +102,7 @@ namespace Ludo
                 transform.localScale = initialScale;
             }
 
+            currentPlace += counter;
             GameController.Instance.IsPlayerMoving = false;
             GameController.Instance.CurrentDiceValue = 0;
         }

@@ -12,7 +12,6 @@ namespace Ludo
 
         int currentFrame;
         float timer;
-        bool _isRolling;
 
         private void OnEnable()
         {
@@ -26,7 +25,7 @@ namespace Ludo
 
         private void Update()
         {
-            if (!_isRolling) return;
+            if (!GameController.Instance.IsDiceRolling) return;
 
             timer += Time.deltaTime;
 
@@ -46,7 +45,7 @@ namespace Ludo
 
         public void GetRandomNumberAPI()
         {
-            _isRolling = true;
+            GameController.Instance.IsDiceRolling = true;
             string url = Constants.GET_GENERATE_RANDOM_NUMBER;
             APIServices.Instance.HandleAPIServices(url, OnGetRandomNumberResponse);
         }
@@ -91,7 +90,7 @@ namespace Ludo
         private void ResetDice()
         {
             _diceButton.interactable = true;
-            _isRolling = false;
+            GameController.Instance.IsDiceRolling = false;
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Ludo
 
         public int CurrentDiceValue { set; get; }
         public bool IsPlayerMoving { set; get; }
+        public bool IsDiceRolling { set; get; }
 
         private void Awake()
         {
