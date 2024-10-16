@@ -26,9 +26,7 @@ namespace Ludo
 
         private void HandleTexture()
         {
-            if (!_rawImage)
-                _rawImage = GetComponent<RawImage>();
-
+            _rawImage = GetComponent<RawImage>();
             var texture = Addressables.LoadAssetAsync<Texture2D>(_textureReference).WaitForCompletion();
             _rawImage.texture = texture;
         }

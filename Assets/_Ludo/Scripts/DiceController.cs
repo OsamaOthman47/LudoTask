@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,11 +24,6 @@ namespace Ludo
             _diceButton.onClick.RemoveAllListeners();
         }
 
-        private void OnDiceClicked()
-        {
-            _isRolling = true;
-        }
-
         private void Update()
         {
             if (!_isRolling) return;
@@ -40,6 +36,62 @@ namespace Ludo
                 currentFrame = (currentFrame + 1) % _dices.Length;
                 _dices[currentFrame].SetAsLastSibling();
             }
+        }
+
+        private void OnDiceClicked()
+        {
+            _diceButton.interactable = false;
+            GetRandomNumberAPI();
+        }
+
+        public void GetRandomNumberAPI()
+        {
+            _isRolling = true;
+            string url = Constants.GET_GENERATE_RANDOM_NUMBER;
+            APIServices.Instance.HandleAPIServices(url, OnGetRandomNumberResponse);
+        }
+
+        private void OnGetRandomNumberResponse(bool isSuccess, string response)
+        {
+            if (isSuccess)
+            {
+                if (int.TryParse(response, out int value))
+                {
+                    StartCoroutine(ExecuteAfterTime(0.5f, value));
+                }
+                else
+                {
+                    Debug.LogError("Invalid Value");
+                    ResetDice();
+                }
+            }
+            else
+            {
+                Debug.LogError(response);
+            }
+        }
+
+        private IEnumerator ExecuteAfterTime(float time, int value)
+        {
+            // Wait for the specified time
+            yield return new WaitForSeconds(time);
+
+            // Execute your code here after the delay
+            SetNumberOnDice(value);
+        }
+
+        private void SetNumberOnDice(int number)
+        {
+            Debug.Log(number);
+            ResetDice();
+            _dices[number - 1].SetAsLastSibling();
+            GameController.Instance.CurrentDiceValue = number;
+        }
+
+        private void ResetDice()
+        {
+            _diceButton.interactable = true;
+            _isRolling = false;
         }
     }
 }
