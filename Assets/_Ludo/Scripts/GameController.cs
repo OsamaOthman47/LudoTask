@@ -1,4 +1,7 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace Ludo
 {
@@ -15,6 +18,11 @@ namespace Ludo
         public bool IsPlayerMoving { set; get; }
         public bool IsDiceRolling { set; get; }
 
+        public Button diceButton;
+
+        [SerializeField] TextMeshProUGUI _hintText;
+        [SerializeField] Button _resetButton;
+
         private void Awake()
         {
             if (Instance == null)
@@ -25,6 +33,27 @@ namespace Ludo
             {
                 Destroy(gameObject);
             }
+        }
+
+        private void Start()
+        {
+            HintText("Roll the dice.");
+            _resetButton.onClick.AddListener(OnResetButtonClicked);
+        }
+
+        public void HintText(string hint)
+        {
+            _hintText.text = hint;
+        }
+
+        public void ClearHintText()
+        {
+            _hintText.text = string.Empty;
+        }
+
+        private void OnResetButtonClicked()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

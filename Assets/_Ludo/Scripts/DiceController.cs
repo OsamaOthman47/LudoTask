@@ -45,6 +45,7 @@ namespace Ludo
 
         public void GetRandomNumberAPI()
         {
+            GameController.Instance.HintText("Rolling...");
             GameController.Instance.IsDiceRolling = true;
             string url = Constants.GET_GENERATE_RANDOM_NUMBER;
             APIServices.Instance.HandleAPIServices(url, OnGetRandomNumberResponse);
@@ -85,6 +86,7 @@ namespace Ludo
             ResetDice();
             _dices[number - 1].SetAsLastSibling();
             GameController.Instance.CurrentDiceValue = number;
+            GameController.Instance.HintText("Click on the player.");
         }
 
         private void ResetDice()

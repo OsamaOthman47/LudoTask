@@ -54,23 +54,28 @@ namespace Ludo
 
         private IEnumerator MovePlayer()
         {
+            GameController.Instance.ClearHintText();
             GameController.Instance.IsPlayerMoving = true;
-
             Vector3 initialScale = transform.localScale;   // Store the original scale
             Vector3 scaledUp = initialScale * 1.5f;        // Slightly larger scale
-
-            GameController.Instance.CurrentDiceValue += currentPlace;
-            Debug.Log("CurrentDiceValue: " + GameController.Instance.CurrentDiceValue);
-
+            int loopValue = GameController.Instance.CurrentDiceValue += currentPlace;
             int counter = 0;
 
-            for (int i = currentPlace; i < GameController.Instance.CurrentDiceValue; i++)
+            GameController.Instance.HintText("Moving...");
+
+            for (int i = currentPlace; i < loopValue; i++)
             {
-                Vector3 startPosition = transform.position;
-                //currentPlace = i - 1;
-                //currentPlace = i;
+                if (loopValue > path.Length)
+                {
+                    int leftValue = path.Length - currentPlace;
+                    GameController.Instance.HintText($"The dice value is more than the path limit, you need to get {leftValue}. Roll the dice again or reset the game.");
+                    ResetValues();
+                    yield break;  // Exit and stop the coroutine
+                }
+
                 counter++;
-                Vector3 targetPosition = path[/*currentPlace*/ i].position;
+                Vector3 startPosition = transform.position;
+                Vector3 targetPosition = path[i].position;
                 float duration = 0.3f; // Time to move between positions
                 float elapsedTime = 0f;
 
@@ -100,9 +105,27 @@ namespace Ludo
                 // Ensure the final position and scale are set correctly
                 transform.position = targetPosition;
                 transform.localScale = initialScale;
+
+                // Hint Reset
             }
 
             currentPlace += counter;
+            ResetValues();
+
+
+            if (loopValue.Equals(path.Length))
+            {
+                GameController.Instance.HintText("The player has reached the path limit, Press the reset button");
+                GameController.Instance.diceButton.interactable = false;
+            }
+            else 
+            {
+                GameController.Instance.HintText("Roll the dice.");
+            }
+        }
+
+        private void ResetValues()
+        {
             GameController.Instance.IsPlayerMoving = false;
             GameController.Instance.CurrentDiceValue = 0;
         }
