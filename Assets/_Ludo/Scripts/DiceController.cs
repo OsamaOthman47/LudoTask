@@ -25,7 +25,7 @@ namespace Ludo
 
         private void Update()
         {
-            if (!GameController.Instance.IsDiceRolling) return;
+            if (!GameController.Instance.IsDiceRolling) return; // only run animation when IsDiceRolling is true
 
             timer += Time.deltaTime;
 
@@ -33,7 +33,7 @@ namespace Ludo
             {
                 timer -= _frameRate;
                 currentFrame = (currentFrame + 1) % _dices.Length;
-                _dices[currentFrame].SetAsLastSibling();
+                _dices[currentFrame].SetAsLastSibling(); // set the target dice image on top of all so it appears to the user
             }
         }
 
@@ -57,6 +57,7 @@ namespace Ludo
             {
                 if (int.TryParse(response, out int value))
                 {
+                    // using Coroutine to delay the response for the sake of the animation time and the user experience
                     StartCoroutine(ExecuteAfterTime(0.5f, value));
                 }
                 else
@@ -82,10 +83,9 @@ namespace Ludo
 
         private void SetNumberOnDice(int number)
         {
-            Debug.Log(number);
             ResetDice();
-            _dices[number - 1].SetAsLastSibling();
-            GameController.Instance.CurrentDiceValue = number;
+            _dices[number - 1].SetAsLastSibling(); // the (-1) is for the indexing of the array
+            GameController.Instance.CurrentDiceValue = number; // Cache the Current Value of the dice in the Game Controller so it can be accessed throughout the scene
             GameController.Instance.HintText("Click on the player.");
         }
 

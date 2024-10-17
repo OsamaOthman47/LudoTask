@@ -12,6 +12,8 @@ namespace Ludo
 
         private void Awake()
         {
+            // handle the type of the asset e.g. texture
+
             switch (_addressableType)
             {
                 case AddressableType.Texture:
@@ -27,7 +29,7 @@ namespace Ludo
         private void HandleTexture()
         {
             _rawImage = GetComponent<RawImage>();
-            var texture = Addressables.LoadAssetAsync<Texture2D>(_textureReference).WaitForCompletion();
+            var texture = Addressables.LoadAssetAsync<Texture2D>(_textureReference).WaitForCompletion(); // load texture based on the reference and wait for completion is used so the function ends at the same frame
             _rawImage.texture = texture;
         }
     }

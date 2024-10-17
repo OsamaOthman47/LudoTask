@@ -9,7 +9,7 @@ namespace Ludo
     {
         public static APIServices Instance { get; private set; }
 
-        private void Awake()
+        private void Awake() // create singleton
         {
             if (Instance == null)
             {

@@ -19,6 +19,8 @@ namespace Ludo
 
         private void SelectPath()
         {
+            // select each path relative to every player's color
+
             switch (playerColor)
             {
                 case PlayerColor.Blue:
@@ -45,11 +47,12 @@ namespace Ludo
 
         private void OnPlayerClicked()
         {
+            // Don't proceed if the dice is rolling or the player is moving or at the start of the game
             if (GameController.Instance.CurrentDiceValue.Equals(0)) return;
             if (GameController.Instance.IsPlayerMoving) return;
             if (GameController.Instance.IsDiceRolling) return;
 
-            StartCoroutine(MovePlayer());
+            StartCoroutine(MovePlayer()); // to move player with smooth animation
         }
 
         private IEnumerator MovePlayer()
@@ -58,16 +61,17 @@ namespace Ludo
             GameController.Instance.IsPlayerMoving = true;
             Vector3 initialScale = transform.localScale;   // Store the original scale
             Vector3 scaledUp = initialScale * 1.5f;        // Slightly larger scale
-            int loopValue = GameController.Instance.CurrentDiceValue += currentPlace;
+            int loopValue = GameController.Instance.CurrentDiceValue += currentPlace; // this value is relative to the current player place and the current value of the dice
             int counter = 0;
 
+            GameController.Instance.diceButton.interactable = false; // don't allow to click roll dice while player moving
             GameController.Instance.HintText("Moving...");
 
             for (int i = currentPlace; i < loopValue; i++)
             {
-                if (loopValue > path.Length)
+                if (loopValue > path.Length) // check if the current dice value is not more than the path length
                 {
-                    int leftValue = path.Length - currentPlace;
+                    int leftValue = path.Length - currentPlace; // the exact value to reach the end of the path 
                     GameController.Instance.HintText($"The dice value is more than the path limit, you need to get {leftValue}. Roll the dice again or reset the game.");
                     ResetValues();
                     yield break;  // Exit and stop the coroutine
@@ -100,20 +104,18 @@ namespace Ludo
                     yield return null; // Wait until the next frame
                 }
 
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.2f); // time to pause between the moves
 
                 // Ensure the final position and scale are set correctly
                 transform.position = targetPosition;
                 transform.localScale = initialScale;
-
-                // Hint Reset
             }
 
-            currentPlace += counter;
+            currentPlace += counter; // cache the current place that the player has reached
             ResetValues();
 
 
-            if (loopValue.Equals(path.Length))
+            if (loopValue.Equals(path.Length)) //Check if the player reached the end of the path
             {
                 GameController.Instance.HintText("The player has reached the path limit, Press the reset button");
                 GameController.Instance.diceButton.interactable = false;
@@ -128,6 +130,7 @@ namespace Ludo
         {
             GameController.Instance.IsPlayerMoving = false;
             GameController.Instance.CurrentDiceValue = 0;
+            GameController.Instance.diceButton.interactable = true;
         }
     }
 }

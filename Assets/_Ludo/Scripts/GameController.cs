@@ -23,7 +23,7 @@ namespace Ludo
         [SerializeField] TextMeshProUGUI _hintText;
         [SerializeField] Button _resetButton;
 
-        private void Awake()
+        private void Awake() // create singleton
         {
             if (Instance == null)
             {
@@ -53,6 +53,7 @@ namespace Ludo
 
         private void OnResetButtonClicked()
         {
+            // reset game scene
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }

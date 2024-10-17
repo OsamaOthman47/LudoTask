@@ -16,6 +16,12 @@ namespace Ludo
             StartCoroutine(DownloadAddressables());
         }
 
+        /// <summary>
+        /// Downloads addressable assets asynchronously using the specified label.
+        /// Tracks the download progress and logs it. 
+        /// Upon completion, if the download is successful, it loads the next scene. 
+        /// If the download fails, logs an error message.
+        /// </summary>
         public IEnumerator DownloadAddressables()
         {
             AsyncOperationHandle asyncOperationHandle = Addressables.DownloadDependenciesAsync(_label);
@@ -25,7 +31,7 @@ namespace Ludo
 
                 if ((int)asyncOperationHandle.GetDownloadStatus().TotalBytes != 0)
                 {
-                    Debug.Log("Addressables Download Progress: " + downloadProgress);
+                    Debug.Log("Addressables Assets Downloading Progress: " + downloadProgress);
                 }
 
                 yield return null;
@@ -35,12 +41,12 @@ namespace Ludo
 
             if (asyncOperationHandle.Status == AsyncOperationStatus.Succeeded)
             {
-                Debug.Log("Downloaded Addressables successfully.");
+                Debug.Log("Addressables Assets Downloaded Successfully.");
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
             else
             {
-                Debug.LogError("Failed to download Addressables: " + asyncOperationHandle.OperationException.Message);
+                Debug.LogError(asyncOperationHandle.OperationException.Message);
             }
         }
     }
